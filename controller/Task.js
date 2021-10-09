@@ -1,3 +1,4 @@
+const e = require("express");
 const Task = require("../schema/Task");
 
 const createTask = async (req, res, next) => {
@@ -34,9 +35,44 @@ const getTaskById = async (req, res, next) => {
     res.status(500).json({ message: e.message });
   }
 };
+ 
+
+
+const patchTaskById = async (req, res, next) => {
+    try {
+      const {id: taskID} = req.params;
+
+      const newTask = req.body;
+
+      const task = await Task.findOne({_id: taskID})
+      
+      if(!task){
+        return res.status(404).json({message: `Task Not found with the ID ${taskID}`})
+      }else{
+        await Task.findByIdAndUpdate(taskID, newTask)
+        res.status(200).json({message: `Task Updated with the ID: ${taskID}`})
+      }
+
+    } catch (e) {
+      res.status(500).json({message: e.message})
+    }
+}
+
+const deleteTaskById = async (req, res, next)=>{
+  try {
+      const {id: taskID} = req.params;
+      const task = await Task.findByIdAndDelete(taskID)
+      
+      res.status(200).json({message: `Task deleted successfully with the ID:${taskID} `})
+  } catch (e) {
+      res.status(500).json({message: e.message})
+  }
+}
 
 module.exports = {
   getAllTask,
   createTask,
   getTaskById,
+  patchTaskById,
+  deleteTaskById
 };
