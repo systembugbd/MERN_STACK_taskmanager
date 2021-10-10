@@ -2,6 +2,8 @@ const express = require("express");
 const Task = require("./router/task");
 const app = express();
 const connectDB = require("./db/connectDB");
+const notfound = require("./middlewar/notfound");
+const errorHandler = require("./middlewar/errorHandler");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 3000;
@@ -14,6 +16,10 @@ app.get("/", (req, res, next) => {
 
 // Set Default Route
 app.use("/api/v1/task", Task);
+
+//Set Middlewar
+app.use(notfound);
+app.use(errorHandler);
 
 //start Server and Database connection
 const startServer = async () => {
